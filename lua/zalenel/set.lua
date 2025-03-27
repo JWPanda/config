@@ -1,0 +1,46 @@
+-- Leader sets
+vim.g.mapleader = " "
+vim.g.maplocalleader = "\\"
+
+-- Line Numbers
+vim.opt.nu = true
+vim.opt.relativenumber = true
+
+-- Set Tab Size
+vim.opt.tabstop = 2
+vim.opt.softtabstop = 2
+vim.opt.shiftwidth = 2
+vim.opt.expandtab = true
+
+-- Paste History
+vim.opt.swapfile = false
+vim.opt.backup = false
+vim.opt.undodir = os.getenv("HOME") .. "/.vim/undordir"
+vim.opt.undofile = true
+vim.opt.clipboard = 'unnamedplus'
+
+-- Search Highlight
+vim.opt.hlsearch = false
+vim.opt.incsearch = true
+vim.opt.ignorecase = true
+vim.opt.ignorecase = true
+
+-- Control splits
+vim.opt.splitright = true
+vim.opt.splitbelow = true
+
+-- Colors
+vim.opt.termguicolors = true
+
+-- Font 
+ vim.g.have_nerd_font = true
+
+-- Scroll control
+vim.opt.scrolloff = 8
+vim.opt.signcolumn = "yes"
+vim.opt.isfname:append("@-@")
+
+-- Update time
+vim.opt.updatetime = 50
+
+vim.opt.colorcolumn = "80"
