@@ -11,24 +11,25 @@ return {
 			local mason_lspconfig = require("mason-lspconfig")
 
 			mason_lspconfig.setup({
-				ensure_installed = { "lua_ls", "rust_analyzer", "ts-ls" },
+				ensure_installed = { "ruby_lsp", "lua_ls", "rust_analyzer", "ts-ls" },
 			})
 		end,
 	},
 	{
 		"nvimtools/none-ls.nvim",
+		dependencies = {
+			"nvimtools/none-ls-extras.nvim",
+		},
 		config = function()
 			local null_ls = require("null-ls")
 			null_ls.setup({
 				sources = {
-					-- LSP Servers
 					null_ls.builtins.formatting.stylua,
 					null_ls.builtins.completion.spell,
-
-					-- Formatter
-					null_ls.builtins.diagnostics.rubocop,
 					null_ls.builtins.formatting.rubocop,
-					null_ls.builtins.formatting.prettier,
+					null_ls.builtins.diagnostics.rubocop,
+					null_ls.builtins.formatting.prettierd,
+					require("none-ls.diagnostics.eslint"),
 				},
 			})
 		end,
@@ -47,6 +48,13 @@ return {
 
 			lspconfig.lua_ls.setup({ capabilities })
 			lspconfig.ts_ls.setup({ capabilities })
+			lspconfig.ruby_lsp.setup({ capabilities })
+			lspconfig.eslint.setup({
+        capabilities = capabilities, 
+				settings = {
+					packageManager = "yarn",
+				},
+			})
 		end,
 	},
 	{
