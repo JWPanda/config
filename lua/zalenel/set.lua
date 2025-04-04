@@ -22,7 +22,7 @@ vim.opt.backup = false
 vim.opt.undodir = os.getenv("HOME") .. "/.vim/undordir"
 vim.opt.undofile = true
 vim.schedule(function()
-  vim.opt.clipboard = 'unnamedplus'
+  vim.opt.clipboard = "unnamedplus"
 end)
 
 -- Search Highlight
@@ -33,6 +33,12 @@ vim.opt.ignorecase = true
 -- Control splits
 vim.opt.splitright = true
 vim.opt.splitbelow = true
+
+-- Sets how neovim will display certain whitespace characters in the editor.
+--  See `:help 'list'`
+--  and `:help 'listchars'`
+vim.opt.list = true
+vim.opt.listchars = { tab = "» ", trail = "·", nbsp = "␣" }
 
 -- Colors
 vim.opt.termguicolors = true
@@ -47,6 +53,7 @@ vim.opt.isfname:append("@-@")
 
 -- Update time
 vim.opt.updatetime = 50
+vim.opt.timeoutlen = 300
 
 vim.opt.colorcolumn = "80"
 
@@ -57,4 +64,10 @@ vim.api.nvim_create_autocmd("TextYankPost", {
   callback = function()
     vim.highlight.on_yank()
   end,
+})
+
+vim.diagnostic.config({
+  underline = { severity = { max = vim.diagnostic.severity.INFO } },
+  virtual_text = { severity = { min = vim.diagnostic.severity.WARN } },
+  float = { border = "rounded", header = "" },
 })
