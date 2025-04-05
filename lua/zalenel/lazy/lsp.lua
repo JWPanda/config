@@ -32,6 +32,12 @@ end
 
 return {
 	{
+		"vim-ruby/vim-ruby",
+		config = function()
+			vim.cmd([[autocmd FileType ruby setlocal indentkeys-=.]])
+		end,
+	},
+	{
 		"neovim/nvim-lspconfig",
 		dependencies = {
 			"saghen/blink.cmp",
@@ -40,59 +46,11 @@ return {
 			"WhoIsSethDaniel/mason-tool-installer.nvim",
 			-- Useful status updates for LSP.
 			{ "j-hui/fidget.nvim", opts = {} },
-			"saghen/blink.cmp",
 			"folke/lazydev.nvim",
 			"WhoIsSethDaniel/mason-tool-installer.nvim",
 		},
 		opts = {
-			servers = {
-				rust_analyzer = {},
-				solargraph = {
-					filetypes = {
-						"ruby",
-					},
-					flags = {
-						debounce_text_changes = 150,
-					},
-					settings = {
-						solargraph = {
-							autoformat = true,
-							completion = true,
-							diagnostic = true,
-							folding = true,
-							references = true,
-							rename = true,
-							symbols = true,
-						},
-					},
-				},
-				ruby_lsp = {
-					addonSettings = {
-						["Ruby LSP Rails"] = {
-							enablePendingMigrationsPrompt = false,
-						},
-					},
-					on_attach = function(client, buffer)
-						add_ruby_deps_command(client, buffer)
-					end,
-				},
-				lua_ls = {},
-			},
-			setup = {
-				sorbet = function()
-					local function sorbet_root_pattern(...)
-						local patterns = { "sorbet/config" }
-						return require("lspconfig.util").root_pattern(unpack(patterns))(...)
-					end
-					require("lspconfig").sorbet.setup({
-						cmd = { "srb", "tc", "--lsp" },
-						filetypes = { "ruby" },
-						root_dir = function(fname)
-							return sorbet_root_pattern(fname)
-						end,
-					})
-				end,
-			},
+			servers = {},
 		},
 		config = function(_, opts)
 			-- Diagnostic Config
@@ -124,12 +82,60 @@ return {
 				},
 			})
 
+			local capabilities = vim.lsp.protocol.make_client_capabilities()
+
+			-- Blink
+			local blink_loaded, blink = pcall(require, "blink.cmp")
+			if blink_loaded then
+				capabilities = vim.tbl_deep_extend("force", capabilities, blink.get_lsp_capabilities())
+			end
+
+			local servers = {
+				ruby_lsp = {
+					cmd = { vim.fn.expand("~/.rbenv/shims/ruby-lsp") },
+					root_dir = function(fname)
+						return require("lspconfig").util.root_pattern("Gemfile", ".git")(fname) or vim.fn.getcwd()
+					end,
+					formatter = "false",
+					on_attach = function(client, buffer)
+						add_ruby_deps_command(client, buffer)
+					end,
+				},
+				rust_analyzer = {},
+				solargraph = {
+					cmd = { vim.fn.expand("~/.rbenv/shims/solargraph") },
+					root_dir = function(fname)
+						return require("lspconfig").util.root_pattern("Gemfile", ".git")(fname) or vim.fn.getcwd()
+					end,
+					filetypes = {
+						"ruby",
+					},
+					flags = {
+						debounce_text_changes = 150,
+					},
+					settings = {
+						solargraph = {
+							autoformat = true,
+							completion = true,
+							diagnostic = true,
+							folding = true,
+							references = true,
+							rename = true,
+							symbols = true,
+						},
+					},
+				},
+				lua_ls = {},
+			}
+
 			local ensure_installed = vim.tbl_keys(opts.servers or {})
+
 			vim.list_extend(ensure_installed, {
 				"stylua", -- Used to format Lua code
 				"ruby_lsp",
 				"solargraph",
 			})
+
 			require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
 
 			require("mason-lspconfig").setup({
@@ -137,15 +143,18 @@ return {
 				automatic_installation = false,
 				handlers = {
 					function(server_name)
-						local server = opts.servers[server_name] or {}
+						local server = servers[server_name] or {}
 						-- This handles overriding only values explicitly passed
 						-- by the server configuration above. Useful when disabling
 						-- certain features of an LSP (for example, turning off formatting for ts_ls)
-						server.capabilities = require("blink.cmp").get_lsp_capabilities()
+						server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
 						require("lspconfig")[server_name].setup(server)
 					end,
 				},
 			})
+
+			require("lspconfig").ruby_lsp.setup(servers["ruby_lsp"])
+			require("lspconfig").solargraph.setup(servers["solargraph"])
 		end,
 	},
 	{
