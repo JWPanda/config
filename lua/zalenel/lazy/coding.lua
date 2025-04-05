@@ -1,5 +1,8 @@
 return {
   {
+    "tpope/vim-rails"
+  },
+  {
     "mbbill/undotree",
   },
   {

@@ -47,7 +47,25 @@ return {
 		opts = {
 			servers = {
 				rust_analyzer = {},
-				solargraph = {},
+				solargraph = {
+					filetypes = {
+						"ruby",
+					},
+					flags = {
+						debounce_text_changes = 150,
+					},
+					settings = {
+						solargraph = {
+							autoformat = true,
+							completion = true,
+							diagnostic = true,
+							folding = true,
+							references = true,
+							rename = true,
+							symbols = true,
+						},
+					},
+				},
 				ruby_lsp = {
 					addonSettings = {
 						["Ruby LSP Rails"] = {
@@ -59,6 +77,21 @@ return {
 					end,
 				},
 				lua_ls = {},
+			},
+			setup = {
+				sorbet = function()
+					local function sorbet_root_pattern(...)
+						local patterns = { "sorbet/config" }
+						return require("lspconfig.util").root_pattern(unpack(patterns))(...)
+					end
+					require("lspconfig").sorbet.setup({
+						cmd = { "srb", "tc", "--lsp" },
+						filetypes = { "ruby" },
+						root_dir = function(fname)
+							return sorbet_root_pattern(fname)
+						end,
+					})
+				end,
 			},
 		},
 		config = function(_, opts)
