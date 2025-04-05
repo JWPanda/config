@@ -57,17 +57,3 @@ vim.opt.timeoutlen = 300
 
 vim.opt.colorcolumn = "80"
 
--- Auto commands
-vim.api.nvim_create_autocmd("TextYankPost", {
-  desc = "Highlight when yanking text",
-  group = vim.api.nvim_create_augroup("kickstart-hightlight-yank", { clear = true }),
-  callback = function()
-    vim.highlight.on_yank()
-  end,
-})
-
-vim.diagnostic.config({
-  underline = { severity = { max = vim.diagnostic.severity.INFO } },
-  virtual_text = { severity = { min = vim.diagnostic.severity.WARN } },
-  float = { border = "rounded", header = "" },
-})
