@@ -92,6 +92,7 @@ return {
 
 			local servers = {
 				ruby_lsp = {
+          mason = false,
 					cmd = { vim.fn.expand("~/.rbenv/shims/ruby-lsp") },
 					root_dir = function(fname)
 						return require("lspconfig").util.root_pattern("Gemfile", ".git")(fname) or vim.fn.getcwd()
