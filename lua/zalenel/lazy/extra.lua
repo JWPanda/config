@@ -1,6 +1,12 @@
 return {
 	{ "nvim-tree/nvim-web-devicons", opts = {} },
 	{ "tpope/vim-fugitive" },
+  {
+    "j-hui/fidget.nvim",
+    opts = {
+      -- options
+    },
+  },
 	{ -- Useful plugin to show you pending keybinds.
 		"folke/which-key.nvim",
 		event = "VimEnter", -- Sets the loading event to 'VimEnter'

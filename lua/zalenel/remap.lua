@@ -21,17 +21,15 @@ vim.keymap.set("v", ">", ">gv")
 
 -- Editing
 vim.keymap.set("n", "J", "mzJ`z", { desc = "Append next line to current without moving cursor" })
-vim.keymap.set("x", "<leader>p", '"_dP', { desc = "paste without removing current paste buffer" })
-vim.keymap.set("n", "<leader>y", '"+y', { desc = "yank into system clipboard" })
-vim.keymap.set("v", "<leader>y", '"+y', { desc = "yank into system clipboard" })
-vim.keymap.set("n", "<leader>Y", '"+Y', { desc = "yank line into system clipboard" })
-vim.keymap.set("v", "<leader>d", '"_d')
-vim.keymap.set("n", "<leader>d", '"_d')
+vim.keymap.set("x", "<leader>p", '"_dP', { desc = "[P]aste without removing current paste buffer" })
+vim.keymap.set({"n", "v"}, "<leader>y", '"+y', { desc = "[Y]ank into system clipboard" })
+vim.keymap.set({"n", "v"}, "<leader>d", '"_d', { desc = "[D]elete into the void"})
+vim.keymap.set("n", "<leader>Y", '"+Y', { desc = "[Y]ank line into system clipboard" })
 vim.keymap.set(
 	"n",
 	"<leader>rs",
 	[[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]],
-	{ desc = "Find and replace current word" }
+	{ desc = "[R]eplace [S]tring" }
 )
 
 -- save file
@@ -85,13 +83,13 @@ vim.keymap.set("n", "<leader>xQ", "<cmd>Trouble qflist toggle<cr>", { desc = "Qu
 vim.keymap.set("n", "<C-f>", "<cmd>silent !tmux neww tmux-sessionizer<CR>")
 
 --UndoTree Plugin
-vim.keymap.set("n", "<leader>u", vim.cmd.UndotreeToggle, { desc = "UndotreeToggle" })
+vim.keymap.set("n", "<leader>ut", vim.cmd.UndotreeToggle, { desc = "[U]ndotree [T]oggle" })
 
 --Fugitive
 vim.keymap.set("n", "<leader>gs", vim.cmd.Git, { desc = "Fugitive git" })
 
 -- Neotree
-vim.keymap.set("n", "<C-t>", ":Neotree filesystem reveal left<CR>", { desc = "Neotree file systme rever" })
+-- vim.keymap.set("n", "<C-t>", ":Neotree filesystem reveal left<CR>", { desc = "Neotree file systme rever" })
 
 --Telescope
 vim.keymap.set("n", "<leader>sh", telescope.help_tags, { desc = "[S]earch [H]elp" })
@@ -133,7 +131,7 @@ harpoon:setup() -- REQUIRED
 
 vim.keymap.set("n", "<leader>a", function()
 	harpoon:list():add()
-end, { desc = "Harpoon add to buffer" })
+end, { desc = "Harpoon [A]dd to buffer" })
 
 vim.keymap.set("n", "<leader>h", function()
 	harpoon.ui:toggle_quick_menu(harpoon:list())
@@ -141,23 +139,23 @@ end, { desc = "Harpoon open buffer float" })
 
 vim.keymap.set("n", "<leader>1", function()
 	harpoon:list():select(1)
-end, { desc = "Harpoon open buffer 1" })
+end, { desc = "Harpoon open buffer [1]" })
 
 vim.keymap.set("n", "<leader>2", function()
 	harpoon:list():select(2)
-end, { desc = "Harpoon open buffer 2" })
+end, { desc = "Harpoon open buffer [2]" })
 
 vim.keymap.set("n", "<leader>3", function()
 	harpoon:list():select(3)
-end, { desc = "Harpoon open buffer 3" })
+end, { desc = "Harpoon open buffer [3]" })
 
 vim.keymap.set("n", "<leader>4", function()
 	harpoon:list():select(4)
-end, { desc = "Harpoon open buffer 4" })
+end, { desc = "Harpoon open buffer [4]" })
 
 vim.keymap.set("n", "<leader>5", function()
 	harpoon:list():select(5)
-end, { desc = "Harpoon open buffer 5" })
+end, { desc = "Harpoon open buffer [5]" })
 
 -- Toggle previous & next buffers stored within Harpoon list
 vim.keymap.set("n", "<C-S-P>", function()

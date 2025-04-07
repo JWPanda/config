@@ -92,7 +92,7 @@ return {
 
 			local servers = {
 				ruby_lsp = {
-          mason = false,
+					mason = false,
 					cmd = { vim.fn.expand("~/.rbenv/shims/ruby-lsp") },
 					root_dir = function(fname)
 						return require("lspconfig").util.root_pattern("Gemfile", ".git")(fname) or vim.fn.getcwd()
@@ -104,19 +104,16 @@ return {
 				},
 				rust_analyzer = {},
 				solargraph = {
-					cmd = { vim.fn.expand("~/.rbenv/shims/solargraph") },
+					cmd = { vim.fn.expand("~/.rbenv/shims/solargraph"), "stdio" },
 					root_dir = function(fname)
 						return require("lspconfig").util.root_pattern("Gemfile", ".git")(fname) or vim.fn.getcwd()
 					end,
-					filetypes = {
-						"ruby",
-					},
 					flags = {
 						debounce_text_changes = 150,
 					},
 					settings = {
 						solargraph = {
-							autoformat = true,
+							autoformat = false,
 							completion = true,
 							diagnostic = true,
 							folding = true,
@@ -126,7 +123,15 @@ return {
 						},
 					},
 				},
-				lua_ls = {},
+				lua_ls = {
+          settings = {
+            Lua = {
+              diagnostics = {
+                globals = { "vim" }
+              }
+            }
+          }
+        },
 			}
 
 			local ensure_installed = vim.tbl_keys(opts.servers or {})

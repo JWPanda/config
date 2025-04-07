@@ -3,7 +3,7 @@ local telescope = require("telescope.builtin")
 local conform = require("conform")
 
 local function augroup(name)
-  return vim.api.nvim_create_augroup("local_" .. name, { clear = true })
+	return vim.api.nvim_create_augroup("local_" .. name, { clear = true })
 end
 
 -- Highlight when yanking
@@ -17,18 +17,18 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 
 -- LSP Progress message
 vim.api.nvim_create_autocmd("LspProgress", {
-  group = augroup("lsp_progress"),
-  callback = function(ev)
-    local spinner = { "⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏" }
-    vim.notify(vim.lsp.status(), vim.log.levels.WARN, {
-      id = "lsp_progress",
-      title = "LSP Progress",
-      opts = function(notif)
-        notif.icon = ev.data.params.value.kind == "end" and " "
-          or spinner[math.floor(vim.uv.hrtime() / (1e6 * 80)) % #spinner + 1]
-      end,
-    })
-  end,
+	group = augroup("lsp_progress"),
+	callback = function(ev)
+		local spinner = { "⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏" }
+		vim.notify(vim.lsp.status(), vim.log.levels.WARN, {
+			id = "lsp_progress",
+			title = "LSP Progress",
+			opts = function(notif)
+				notif.icon = ev.data.params.value.kind == "end" and " "
+					or spinner[math.floor(vim.uv.hrtime() / (1e6 * 80)) % #spinner + 1]
+			end,
+		})
+	end,
 })
 
 vim.api.nvim_create_autocmd("LspAttach", {
@@ -44,7 +44,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 			vim.keymap.set(mode, keys, func, { buffer = event.buf, desc = "LSP: " .. desc })
 		end
 
-		map("D", vim.lsp.buf.hover, "Hover")
+		map("K", vim.lsp.buf.hover, "Hover")
 		map("gd", telescope.lsp_definitions, "[G]oto [D]efinition")
 		map("gr", telescope.lsp_references, "[G]oto [R]eferences")
 		map("gI", telescope.lsp_implementations, "[G]oto [I]mplementation")
@@ -59,6 +59,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		-- WARN: This is not Goto Definition, this is Goto Declaration.
 		--  For example, in C this would take you to the header.
 		map("gD", vim.lsp.buf.declaration, "[G]oto [D]eclaration")
+		map("<C-h>", vim.lsp.buf.signature_help, "Signature [H]elp", {"i"})
 
 		-- This function resolves a difference between neovim nightly (version 0.11) and stable (version 0.10)
 		---@param client vim.lsp.Client
