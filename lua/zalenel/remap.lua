@@ -89,7 +89,7 @@ vim.keymap.set("n", "<leader>ut", vim.cmd.UndotreeToggle, { desc = "[U]ndotree [
 vim.keymap.set("n", "<leader>gs", vim.cmd.Git, { desc = "Fugitive git" })
 
 -- Neotree
--- vim.keymap.set("n", "<C-t>", ":Neotree filesystem reveal left<CR>", { desc = "Neotree file systme rever" })
+--vim.keymap.set("n", "<C-t>", ":Neotree filesystem reveal left<CR>", { desc = "Neotree file systme rever" })
 
 --Telescope
 vim.keymap.set("n", "<leader>sh", telescope.help_tags, { desc = "[S]earch [H]elp" })
@@ -165,3 +165,4 @@ end, { desc = "Harpoon go to previouse buffer" })
 vim.keymap.set("n", "<C-S-N>", function()
 	harpoon:list():next()
 end, { desc = "Harpoon go to next buffer" })
+
