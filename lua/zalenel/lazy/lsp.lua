@@ -95,7 +95,7 @@ return {
 					mason = false,
 					cmd = { vim.fn.expand("~/.rbenv/shims/ruby-lsp") },
 					root_dir = function(fname)
-						return require("lspconfig").util.root_pattern("Gemfile", ".git")(fname) or vim.fn.getcwd()
+						return vim.lsp.util.root_pattern("Gemfile", ".git")(fname) or vim.fn.getcwd()
 					end,
 					formatter = "false",
 					on_attach = function(client, buffer)
@@ -106,7 +106,7 @@ return {
 				solargraph = {
 					cmd = { vim.fn.expand("~/.rbenv/shims/solargraph"), "stdio" },
 					root_dir = function(fname)
-						return require("lspconfig").util.root_pattern("Gemfile", ".git")(fname) or vim.fn.getcwd()
+						return vim.lsp.util.root_pattern("Gemfile", ".git")(fname) or vim.fn.getcwd()
 					end,
 					flags = {
 						debounce_text_changes = 150,
@@ -124,14 +124,14 @@ return {
 					},
 				},
 				lua_ls = {
-          settings = {
-            Lua = {
-              diagnostics = {
-                globals = { "vim" }
-              }
-            }
-          }
-        },
+					settings = {
+						Lua = {
+							diagnostics = {
+								globals = { "vim" },
+							},
+						},
+					},
+				},
 			}
 
 			local ensure_installed = vim.tbl_keys(opts.servers or {})
@@ -139,6 +139,7 @@ return {
 			vim.list_extend(ensure_installed, {
 				"stylua", -- Used to format Lua code
 				"ruby_lsp",
+				"eslint",
 				"solargraph",
 			})
 
@@ -154,13 +155,11 @@ return {
 						-- by the server configuration above. Useful when disabling
 						-- certain features of an LSP (for example, turning off formatting for ts_ls)
 						server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
-						require("lspconfig")[server_name].setup(server)
+						vim.lsp.config(server_name, server)
+						vim.lsp.enable(server_name)
 					end,
 				},
 			})
-
-			require("lspconfig").ruby_lsp.setup(servers["ruby_lsp"])
-			require("lspconfig").solargraph.setup(servers["solargraph"])
 		end,
 	},
 	{

@@ -60,10 +60,10 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		--  For example, in C this would take you to the header.
 		map("gD", vim.lsp.buf.declaration, "[G]oto [D]eclaration")
 		map("<C-h>", vim.lsp.buf.signature_help, "Signature [H]elp", {"i"})
+
     -- AI Mappings
-    map("<leader>ac", '<cmd>:Augment chat<CR>', "[A]i [C]hat", "n")
-    map("<leader>an", '<cmd>:Augment chat-new<CR>', "[A]i Chat [N]ew", "n")
-    map("<leader>at", '<cmd>:Augment chat-toggle<CR>', "[A]i Chat [T]oggle", "n")
+    map("<leader>aa", '<cmd>:CodeCompanionActions<CR>', "[A]i [C]hat", "n")
+    map("<leader>at", '<cmd>:CodeCompanionChat Toggle<CR>', "[A]i Chat [T]oggle", "n")
 
 		-- This function resolves a difference between neovim nightly (version 0.11) and stable (version 0.10)
 		---@param client vim.lsp.Client

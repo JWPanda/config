@@ -22,8 +22,8 @@ vim.keymap.set("v", ">", ">gv")
 -- Editing
 vim.keymap.set("n", "J", "mzJ`z", { desc = "Append next line to current without moving cursor" })
 vim.keymap.set("x", "<leader>p", '"_dP', { desc = "[P]aste without removing current paste buffer" })
-vim.keymap.set({"n", "v"}, "<leader>y", '"+y', { desc = "[Y]ank into system clipboard" })
-vim.keymap.set({"n", "v"}, "<leader>d", '"_d', { desc = "[D]elete into the void"})
+vim.keymap.set({ "n", "v" }, "<leader>y", '"+y', { desc = "[Y]ank into system clipboard" })
+vim.keymap.set({ "n", "v" }, "<leader>d", '"_d', { desc = "[D]elete into the void" })
 vim.keymap.set("n", "<leader>Y", '"+Y', { desc = "[Y]ank line into system clipboard" })
 vim.keymap.set(
 	"n",
@@ -31,6 +31,12 @@ vim.keymap.set(
 	[[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]],
 	{ desc = "[R]eplace [S]tring" }
 )
+vim.keymap.set("n", "<leader>yp", function()
+	local path = vim.fn.expand("%:p")
+	vim.fn.setreg("+", path)
+	vim.notify('Copied "' .. path .. '" to the clipboard!')
+	vim.fn.setreg("", vim.fn.expand("%"))
+end, { desc = "Yank current file path" })
 
 -- save file
 vim.keymap.set({ "i", "x", "n", "s" }, "<C-s>", "<cmd>w<cr><esc>", { desc = "Save File" })
@@ -165,4 +171,3 @@ end, { desc = "Harpoon go to previouse buffer" })
 vim.keymap.set("n", "<C-S-N>", function()
 	harpoon:list():next()
 end, { desc = "Harpoon go to next buffer" })
-

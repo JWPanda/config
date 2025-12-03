@@ -22,9 +22,14 @@ return {
 			formatters_by_ft = {
 				lua = { "stylua" },
 				ruby = { "rubocop" },
-				javascript = { "prettierd", "prettier", stop_after_first = true },
+				javascript = { "prettierd", stop_after_first = true },
 			},
 		},
+	},
+	{
+		"esmuellert/nvim-eslint",
+		config = function() require("nvim-eslint").setup({})
+		end,
 	},
 	{ -- Linting
 		"mfussenegger/nvim-lint",
@@ -33,10 +38,10 @@ return {
 			local lint = require("lint")
 
 			lint.linters_by_ft = {
-				javascript = { "eslint_d" },
-				typescript = { "eslint_d" },
 				markdown = { "markdownlint" },
 				ruby = { "rubocop", "ruby" },
+				json = { "jsonlint" },
+				text = { "vale" },
 			}
 
 			-- To allow other plugins to add linters to require('lint').linters_by_ft,
