@@ -1,6 +1,5 @@
 return {
 	{ "nvim-tree/nvim-web-devicons", opts = {} },
-	{ "tpope/vim-fugitive" },
   {
     "j-hui/fidget.nvim",
     opts = {

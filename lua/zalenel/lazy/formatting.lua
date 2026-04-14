@@ -19,16 +19,26 @@ return {
 			--		}
 			--	end
 			--end,
+			formatters = {
+				rubocop = {
+					command = "bundle",
+					args = { "exec", "rubocop", "--auto-correct-all", "--format", "quiet", "--stderr", "--stdin", "$FILENAME" },
+				},
+			},
 			formatters_by_ft = {
 				lua = { "stylua" },
 				ruby = { "rubocop" },
 				javascript = { "prettierd", stop_after_first = true },
+				typescript = { "prettierd", stop_after_first = true },
+				json = { "jsonlint", stop_after_first = true },
+				yaml = { "prettierd", stop_after_first = true },
 			},
 		},
 	},
 	{
 		"esmuellert/nvim-eslint",
-		config = function() require("nvim-eslint").setup({})
+		config = function()
+			require("nvim-eslint").setup({})
 		end,
 	},
 	{ -- Linting
@@ -37,10 +47,16 @@ return {
 		config = function()
 			local lint = require("lint")
 
+			local rubocop = lint.linters.rubocop
+			rubocop.cmd = "bundle"
+			table.insert(rubocop.args, 1, "rubocop")
+			table.insert(rubocop.args, 1, "exec")
+
 			lint.linters_by_ft = {
 				markdown = { "markdownlint" },
 				ruby = { "rubocop", "ruby" },
 				json = { "jsonlint" },
+				yaml = { "prettierd" },
 				text = { "vale" },
 			}
 

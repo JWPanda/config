@@ -28,7 +28,7 @@ vim.keymap.set("n", "<leader>Y", '"+Y', { desc = "[Y]ank line into system clipbo
 vim.keymap.set(
 	"n",
 	"<leader>rs",
-	[[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]],
+	[[:%s@<C-r><C-w>@<C-r><C-w>@gc<Left><Left><Left>]],
 	{ desc = "[R]eplace [S]tring" }
 )
 vim.keymap.set("n", "<leader>yp", function()
@@ -171,3 +171,7 @@ end, { desc = "Harpoon go to previouse buffer" })
 vim.keymap.set("n", "<C-S-N>", function()
 	harpoon:list():next()
 end, { desc = "Harpoon go to next buffer" })
+
+-- Git
+vim.keymap.set("n", "<leader>gb", ":Gitsigns toggle_current_line_blame<CR>", { desc = "[G]itsigns [B]lame" })
+vim.keymap.set("n", "<leader>gbf", ":Git blame<CR>", { desc = "[G]it [B]lame [F]ile" })
