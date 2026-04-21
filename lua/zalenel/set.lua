@@ -43,9 +43,6 @@ vim.opt.listchars = { tab = "» ", trail = "·", nbsp = "␣" }
 -- Colors
 vim.opt.termguicolors = true
 
--- Font
-vim.g.have_nerd_font = true
-
 -- Scroll control
 vim.opt.scrolloff = 8
 vim.opt.signcolumn = "yes"

@@ -32,88 +32,23 @@ return {
 			{ "nvim-tree/nvim-web-devicons", enabled = vim.g.have_nerd_font },
 		},
 		config = function()
-			-- Telescope is a fuzzy finder that comes with a lot of different things that
-			-- it can fuzzy find! It's more than just a "file finder", it can search
-			-- many different aspects of Neovim, your workspace, LSP, and more!
-			--
-			-- The easiest way to use Telescope, is to start by doing something like:
-			--  :Telescope help_tags
-			--
-			-- After running this command, a window will open up and you're able to
-			-- type in the prompt window. You'll see a list of `help_tags` options and
-			-- a corresponding preview of the help.
-			--
-			-- Two important keymaps to use while in Telescope are:
-			--  - Insert mode: <c-/>
-			--  - Normal mode: ?
-			--
-			-- This opens a window that shows you all of the keymaps for the current
-			-- Telescope picker. This is really useful to discover what Telescope can
-			-- do as well as how to actually do it!
-
-			-- [[ Configure Telescope ]]
-			-- See `:help telescope` and `:help telescope.setup()`
 			require("telescope").setup({
-				-- You can put your default mappings / updates / etc. in here
-				--  All the info you're looking for is in `:help telescope.setup()`
-				--
-				-- defaults = {
-				--   mappings = {
-				--     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
-				--   },
-				-- },
-				-- pickers = {}
 				extensions = {
 					["ui-select"] = {
 						require("telescope.themes").get_dropdown(),
 					},
 				},
 			})
-
-			-- Enable Telescope extensions if they are installed
 			pcall(require("telescope").load_extension, "fzf")
 			pcall(require("telescope").load_extension, "ui-select")
 		end,
 	},
 	{
-		"nvim-telescope/telescope-ui-select.nvim",
-		config = function()
-			local telescope = require("telescope")
-
-			telescope.setup({
-				extensions = {
-					["ui-select"] = {
-						require("telescope.themes").get_dropdown({}),
-					},
-				},
-			})
-
-			require("telescope").load_extension("ui-select")
-		end,
-	},
-	{
 		"nvim-lualine/lualine.nvim",
 		dependencies = { "nvim-tree/nvim-web-devicons" },
-		opt = {
+		opts = {
 			options = {
 				theme = "tokyonight",
-				opts = function(_, opts)
-					local trouble = require("trouble")
-					local symbols = trouble.statusline({
-						mode = "lsp_document_symbols",
-						groups = {},
-						title = false,
-						filter = { range = true },
-						format = "{kind_icon}{symbol.name:Normal}",
-						-- The following line is needed to fix the background color
-						-- Set it to the lualine section you want to use
-						hl_group = "lualine_c_normal",
-					})
-					table.insert(opts.sections.lualine_c, {
-						symbols.get,
-						cond = symbols.has,
-					})
-				end,
 			},
 		},
 	},
