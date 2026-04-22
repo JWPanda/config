@@ -17,7 +17,6 @@ end
 
 vim.opt.rtp:prepend(lazypath)
 
-vim.lsp.enable("ruby-lsp")
 require("lazy").setup({
 	spec = "zalenel.lazy",
 	change_detection = { notfiy = false },

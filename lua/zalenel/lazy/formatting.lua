@@ -1,5 +1,5 @@
 return {
-	{ -- Autoformat
+	{
 		"stevearc/conform.nvim",
 		event = { "BufWritePre" },
 		cmd = { "ConformInfo" },
@@ -16,19 +16,15 @@ return {
 				lua = { "stylua" },
 				ruby = { "rubocop" },
 				javascript = { "prettierd", stop_after_first = true },
+				javascriptreact = { "prettierd", stop_after_first = true },
 				typescript = { "prettierd", stop_after_first = true },
+				typescriptreact = { "prettierd", stop_after_first = true },
 				json = { "prettierd", stop_after_first = true },
 				yaml = { "prettierd", stop_after_first = true },
 			},
 		},
 	},
 	{
-		"esmuellert/nvim-eslint",
-		config = function()
-			require("nvim-eslint").setup({})
-		end,
-	},
-	{ -- Linting
 		"mfussenegger/nvim-lint",
 		event = { "BufReadPre", "BufNewFile" },
 		config = function()
@@ -36,10 +32,16 @@ return {
 
 			lint.linters_by_ft = {
 				markdown = { "markdownlint" },
-				ruby = { "ruby" },
-				json = { "jsonlint" },
 				text = { "vale" },
+				haml = { "haml_lint" },
+				yaml = { "yamllint" },
 			}
+
+			vim.api.nvim_create_autocmd({ "BufWritePost", "BufReadPost", "InsertLeave" }, {
+				callback = function()
+					lint.try_lint()
+				end,
+			})
 		end,
 	},
 }

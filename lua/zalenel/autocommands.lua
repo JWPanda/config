@@ -2,6 +2,25 @@ local function augroup(name)
 	return vim.api.nvim_create_augroup("local_" .. name, { clear = true })
 end
 
+vim.api.nvim_create_autocmd("FileType", {
+	group = augroup("treesitter"),
+	callback = function(args)
+		if pcall(vim.treesitter.start, args.buf) and vim.bo[args.buf].filetype == "ruby" then
+			vim.api.nvim_buf_call(args.buf, function()
+				vim.cmd("syntax enable")
+			end)
+		end
+	end,
+})
+
+-- Workaround for neovim 0.12.1 bug: treesitter conceal_line crashes in LSP float windows
+local orig_open_floating_preview = vim.lsp.util.open_floating_preview
+vim.lsp.util.open_floating_preview = function(contents, syntax, opts, ...)
+	local buf, win = orig_open_floating_preview(contents, syntax, opts, ...)
+	vim.treesitter.stop(buf)
+	return buf, win
+end
+
 -- Highlight when yanking
 vim.api.nvim_create_autocmd("TextYankPost", {
 	desc = "Highlight when yanking text",
@@ -17,7 +36,9 @@ vim.api.nvim_create_autocmd("LspProgress", {
 	callback = function(ev)
 		local spinner = { "⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏" }
 		local ok, status = pcall(vim.lsp.status)
-		if not ok or status == "" then return end
+		if not ok or status == "" then
+			return
+		end
 		vim.notify(status, vim.log.levels.WARN, {
 			id = "lsp_progress",
 			title = "LSP Progress",
@@ -32,7 +53,6 @@ vim.api.nvim_create_autocmd("LspProgress", {
 vim.api.nvim_create_autocmd("LspAttach", {
 	group = vim.api.nvim_create_augroup("kickstart-lsp-attach", { clear = true }),
 	callback = function(event)
-		local telescope = require("telescope.builtin")
 		local conform = require("conform")
 
 		local map = function(keys, func, desc, mode)
@@ -40,22 +60,18 @@ vim.api.nvim_create_autocmd("LspAttach", {
 			vim.keymap.set(mode, keys, func, { buffer = event.buf, desc = "LSP: " .. desc })
 		end
 
-		map("K", vim.lsp.buf.hover, "Hover")
-		map("gd", telescope.lsp_definitions, "[G]oto [D]efinition")
-		map("gr", telescope.lsp_references, "[G]oto [R]eferences")
-		map("gI", telescope.lsp_implementations, "[G]oto [I]mplementation")
-		map("<leader>D", telescope.lsp_type_definitions, "Type [D]efinition")
-		map("<leader>ds", telescope.lsp_document_symbols, "[D]ocument [S]ymbols")
-		map("<leader>ws", telescope.lsp_dynamic_workspace_symbols, "[W]orkspace [S]ymbols")
+		map("gd", vim.lsp.buf.definition, "[G]oto [D]efinition")
+		map("gr", vim.lsp.buf.references, "[G]oto [R]eferences")
+		map("gI", vim.lsp.buf.implementation, "[G]oto [I]mplementation")
+		map("<leader>D", vim.lsp.buf.type_definition, "Type [D]efinition")
+		map("<leader>ds", vim.lsp.buf.document_symbol, "[D]ocument [S]ymbols")
+		map("<leader>ws", vim.lsp.buf.workspace_symbol, "[W]orkspace [S]ymbols")
 		map("<leader>rn", vim.lsp.buf.rename, "[R]e[n]ame")
 		map("<leader>ca", vim.lsp.buf.code_action, "[C]ode [A]ction", { "n", "x" })
 		map("<leader>cf", function()
 			conform.format({ async = true, lsp_format = "fallback" })
 		end, "[C]ode [F]ormat")
 		map("gD", vim.lsp.buf.declaration, "[G]oto [D]eclaration")
-		map("<C-h>", vim.lsp.buf.signature_help, "Signature [H]elp", { "i" })
-		map("<leader>aa", "<cmd>CodeCompanionActions<CR>", "[A]i [A]ctions")
-		map("<leader>at", "<cmd>CodeCompanionChat Toggle<CR>", "[A]i Chat [T]oggle")
 
 		local client = vim.lsp.get_client_by_id(event.data.client_id)
 		if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_documentHighlight, event.buf) then
@@ -78,6 +94,14 @@ vim.api.nvim_create_autocmd("LspAttach", {
 					vim.lsp.buf.clear_references()
 					vim.api.nvim_clear_autocmds({ group = "kickstart-lsp-highlight", buffer = event2.buf })
 				end,
+			})
+		end
+
+		if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_signatureHelp, event.buf) then
+			map("<C-h>", vim.lsp.buf.signature_help, "Signature [H]elp", "i")
+			vim.api.nvim_create_autocmd("CursorHoldI", {
+				buffer = event.buf,
+				callback = vim.lsp.buf.signature_help,
 			})
 		end
 

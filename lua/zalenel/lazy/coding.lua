@@ -1,27 +1,40 @@
 return {
 	{
 		"tpope/vim-rails",
+		ft = { "ruby", "eruby", "haml" },
 	},
 	{
 		"mbbill/undotree",
+		cmd = "UndotreeToggle",
+		keys = {
+			{ "<leader>ut", "<cmd>UndotreeToggle<cr>", desc = "[U]ndotree [T]oggle" },
+		},
 	},
 	{
 		"folke/trouble.nvim",
+		cmd = "Trouble",
+		keys = {
+			{ "<leader>xx", "<cmd>Trouble diagnostics toggle<cr>", desc = "Diagnostics (Trouble)" },
+			{ "<leader>xX", "<cmd>Trouble diagnostics toggle filter.buf=0<cr>", desc = "Buffer diagnostics (Trouble)" },
+			{ "<leader>cs", "<cmd>Trouble symbols toggle focus=false<cr>", desc = "Symbols (Trouble)" },
+			{ "<leader>cl", "<cmd>Trouble lsp toggle focus=false win.position=right<cr>", desc = "LSP (Trouble)" },
+			{ "<leader>xL", "<cmd>Trouble loclist toggle<cr>", desc = "Location list (Trouble)" },
+			{ "<leader>xQ", "<cmd>Trouble qflist toggle<cr>", desc = "Quickfix list (Trouble)" },
+		},
 		opts = {
 			modes = {
 				lsp = {
 					win = { position = "right" },
 				},
-				symbols = { -- Configure symbols mode
+				symbols = {
 					win = {
-						type = "split", -- split window
-						relative = "win", -- relative to current window
-						position = "right", -- right side
-						size = 0.3, -- 30% of the window
+						type = "split",
+						relative = "win",
+						position = "right",
+						size = 0.3,
 					},
 				},
 			},
 		},
-		cmd = "Trouble",
 	},
 }

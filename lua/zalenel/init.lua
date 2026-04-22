@@ -7,3 +7,5 @@ require("zalenel.lazy_init")
 -- Remaps
 require("zalenel.remap")
 require("zalenel.autocommands")
+
+vim.lsp.enable("ruby-lsp")

@@ -4,9 +4,14 @@ return {
 		dependencies = {
 			"saghen/blink.cmp",
 			{ "williamboman/mason.nvim", opts = {} },
-			"williamboman/mason-lspconfig.nvim",
+			"mason-org/mason-lspconfig.nvim",
 			"WhoIsSethDaniel/mason-tool-installer.nvim",
-			{ "j-hui/fidget.nvim", opts = {} },
+			{
+				"j-hui/fidget.nvim",
+				opts = {
+					notification = { override_vim_notify = true },
+				},
+			},
 			"folke/lazydev.nvim",
 		},
 		config = function()
@@ -25,11 +30,13 @@ return {
 				virtual_text = { source = "if_many", spacing = 2 },
 			})
 
-			local capabilities = vim.tbl_deep_extend(
-				"force",
-				vim.lsp.protocol.make_client_capabilities(),
-				require("blink.cmp").get_lsp_capabilities()
-			)
+			vim.lsp.config("*", {
+				capabilities = vim.tbl_deep_extend(
+					"force",
+					vim.lsp.protocol.make_client_capabilities(),
+					require("blink.cmp").get_lsp_capabilities()
+				),
+			})
 
 			vim.api.nvim_create_autocmd("LspAttach", {
 				callback = function(args)
@@ -68,37 +75,23 @@ return {
 			})
 
 			local servers = {
-				rust_analyzer = {},
-				lua_ls = {
-					settings = {
-						Lua = {
-							diagnostics = {
-								globals = { "vim" },
-							},
-						},
-					},
-				},
+				rust_analyzer = require("zalenel.lsp.rust_analyzer"),
+				lua_ls = require("zalenel.lsp.lua_ls"),
+				eslint = require("zalenel.lsp.eslint"),
+				ruby_lsp = require("zalenel.lsp.ruby_lsp"),
+				yamlls = require("zalenel.lsp.yamlls"),
 			}
 
-			local ensure_installed = {
-				"stylua",
-				"eslint",
-			}
+			for server_name, config in pairs(servers) do
+				vim.lsp.config(server_name, config)
+			end
 
-			require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
+			require("mason-tool-installer").setup({ ensure_installed = { "stylua", "eslint" } })
 
 			require("mason-lspconfig").setup({
 				ensure_installed = {},
-				automatic_installation = false,
-				handlers = {
-					function(server_name)
-						local server = servers[server_name] or {}
-						server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
-						vim.lsp.config(server_name, server)
-						vim.lsp.enable(server_name)
-					end,
-					ruby_lsp = function() end, -- configured via lsp/ruby_lsp.lua using rbenv
-					rubocop = function() end,  -- not used as LSP; ruby-lsp handles rubocop diagnostics
+				automatic_enable = {
+					exclude = { "rubocop" },
 				},
 			})
 
@@ -108,7 +101,12 @@ return {
 	{
 		"pmizio/typescript-tools.nvim",
 		dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
-		opts = {},
+		ft = { "javascript", "javascriptreact", "javascript.jsx", "typescript", "typescriptreact", "typescript.tsx" },
+		opts = {
+			settings = {
+				jsx_close_tag = { enable = true },
+			},
+		},
 	},
 	{
 		"saghen/blink.cmp",
@@ -136,13 +134,32 @@ return {
 	},
 	{
 		"folke/lazydev.nvim",
-		ft = "lua", -- only load on lua files
+		ft = "lua",
 		opts = {
 			library = {
-				-- See the configuration section for more details
-				-- Load luvit types when the `vim.uv` word is found
 				{ path = "${3rd}/luv/library", words = { "vim%.uv" } },
 			},
 		},
+	},
+	{
+		"lewis6991/hover.nvim",
+		keys = {
+			{ "K", function() require("hover").hover() end, desc = "Hover" },
+			{ "gK", function() require("hover").hover_select() end, desc = "Hover (select provider)" },
+		},
+		config = function()
+			require("hover").setup({
+				init = function()
+					require("hover.providers.lsp")
+					require("hover.providers.man")
+					require("hover.providers.dictionary")
+				end,
+				preview_opts = { border = "rounded" },
+				preview_window = false,
+				title = true,
+				mouse_providers = { "LSP" },
+				mouse_delay = 1000,
+			})
+		end,
 	},
 }
