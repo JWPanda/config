@@ -54,13 +54,14 @@ vim.api.nvim_create_autocmd("LspAttach", {
 	group = vim.api.nvim_create_augroup("kickstart-lsp-attach", { clear = true }),
 	callback = function(event)
 		local conform = require("conform")
+		local telescope = require("telescope.builtin")
 
 		local map = function(keys, func, desc, mode)
 			mode = mode or "n"
 			vim.keymap.set(mode, keys, func, { buffer = event.buf, desc = "LSP: " .. desc })
 		end
 
-		map("gd", vim.lsp.buf.definition, "[G]oto [D]efinition")
+		map("gd", telescope.lsp_definitions, "[G]oto [D]efinition")
 		map("gr", vim.lsp.buf.references, "[G]oto [R]eferences")
 		map("gI", vim.lsp.buf.implementation, "[G]oto [I]mplementation")
 		map("<leader>D", vim.lsp.buf.type_definition, "Type [D]efinition")
@@ -99,10 +100,6 @@ vim.api.nvim_create_autocmd("LspAttach", {
 
 		if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_signatureHelp, event.buf) then
 			map("<C-h>", vim.lsp.buf.signature_help, "Signature [H]elp", "i")
-			vim.api.nvim_create_autocmd("CursorHoldI", {
-				buffer = event.buf,
-				callback = vim.lsp.buf.signature_help,
-			})
 		end
 
 		if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint, event.buf) then

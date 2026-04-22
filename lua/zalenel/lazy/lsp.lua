@@ -77,7 +77,7 @@ return {
 			local servers = {
 				rust_analyzer = require("zalenel.lsp.rust_analyzer"),
 				lua_ls = require("zalenel.lsp.lua_ls"),
-				eslint = require("zalenel.lsp.eslint"),
+				ts_ls = require("zalenel.lsp.ts_ls"),
 				ruby_lsp = require("zalenel.lsp.ruby_lsp"),
 				yamlls = require("zalenel.lsp.yamlls"),
 			}
@@ -86,7 +86,7 @@ return {
 				vim.lsp.config(server_name, config)
 			end
 
-			require("mason-tool-installer").setup({ ensure_installed = { "stylua", "eslint" } })
+			require("mason-tool-installer").setup({ ensure_installed = { "stylua" } })
 
 			require("mason-lspconfig").setup({
 				ensure_installed = {},
@@ -97,16 +97,6 @@ return {
 
 			vim.lsp.enable("ruby_lsp")
 		end,
-	},
-	{
-		"pmizio/typescript-tools.nvim",
-		dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
-		ft = { "javascript", "javascriptreact", "javascript.jsx", "typescript", "typescriptreact", "typescript.tsx" },
-		opts = {
-			settings = {
-				jsx_close_tag = { enable = true },
-			},
-		},
 	},
 	{
 		"saghen/blink.cmp",
